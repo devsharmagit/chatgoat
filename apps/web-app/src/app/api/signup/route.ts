@@ -1,4 +1,4 @@
-import prisma from "@repo/db/client";
+import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { loginSchema } from "@/types/auth";
