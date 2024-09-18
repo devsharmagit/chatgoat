@@ -13,7 +13,7 @@ export const nextauthOptions = {
           },
           async authorize(credentials) {
             
-              const user = await prisma.user.findFirst({where: {email: credentials?.email}})
+              const user = await prisma.user.findFirst({where: {email: credentials?.email, isVerified: true}})
               if(!user) throw new Error("User doesn't exists!");
               const isPasswordCorrect =  bcrypt.compareSync(credentials?.password || "", user.password);  
               if(isPasswordCorrect) {
@@ -28,17 +28,21 @@ export const nextauthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
       jwt: async ({ user, token }) => {
+        console.log("JWT JWT starts here 👿👿👿👿")
+        console.log({user, token})
         if (user) {
           token.userId = user.id;
           token.email = user.email;
       }
       return token;
       },
-    session: ({ session, token, user }: any) => {
-        if (session.user) {
+    session: async ({ session, token, user }: any) => {
+        if (token) {
             session.user.id = token.userId;
             session.user.email = token.email;
         }
+        console.log("SESSION STARTS HERE ❤️❤️❤️❤️")
+        console.log({session, token, user})
         return session
     },
     
