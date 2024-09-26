@@ -92,10 +92,10 @@ fetchchatBots()
   return (
     <div className='max-w-[1300px] w-full border-white m-auto    '>
       
-<div className='relative grid grid-cols-4 py-4'>
+<div className='relative grid grid-cols-4 py-4 gap-4'>
 <DialogDemo />
 {chatBots.map(({name, id})=>{
-  return <div key={id}>
+  return <div key={id} className='border-white border border-opacity-30 rounded-xl p-4'>
 <p>
   {name}
 </p>
