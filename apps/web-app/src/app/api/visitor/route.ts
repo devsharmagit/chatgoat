@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@repo/db/client";
 import { visitorPost } from "@repo/types/visitor";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
+    console.log(body)
     const { success, data } = visitorPost.safeParse(body);
     if (!success)
       return NextResponse.json({ message: "Invalid data!" }, { status: 400 });

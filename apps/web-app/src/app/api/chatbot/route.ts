@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import   { getServerSession }  from 'next-auth/next'
 import { nextauthOptions } from "../auth/[...nextauth]/options";
@@ -7,8 +7,6 @@ import {chatbotPost} from "@repo/types/chatbot";
 export const POST = async(req: NextRequest)=>{
     try {
     const session = await getServerSession(nextauthOptions)
-    console.log(session)
-    console.log(Object.keys(session))
     if(!session){
         return NextResponse.json({message: "Unauthorized"}, {status: 401})
     }

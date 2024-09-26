@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
+  id           String       @id @default(cuid())
   email        String    @unique
   password     String
   verifyCode   String?
@@ -18,10 +18,10 @@ model User {
 }
 
 model Chatbot {
-  id        Int       @id @default(autoincrement())
+  id        String       @id @default(cuid())
   name      String
   isActive  Boolean   @default(false)
-  userId    Int
+  userId    String
   user      User      @relation("user-chatbots", fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   visitors  Visitor[] @relation("visitor-chatbot")
@@ -29,8 +29,8 @@ model Chatbot {
 }
 
 model Visitor {
-  id        Int       @id @default(autoincrement())
-  chatbotId Int       
+  id        String       @id @default(cuid())
+  chatbotId String       
   chatbot   Chatbot   @relation("visitor-chatbot", fields: [chatbotId], references: [id], onDelete: Cascade)
   visitTime DateTime  @default(now())
   messages  Message[] @relation("message-visitor")
@@ -38,9 +38,9 @@ model Visitor {
 
 model Message {
   id              Int      @id @default(autoincrement())
-  visitorId       Int
+  visitorId       String
   visitor         Visitor  @relation("message-visitor", fields: [visitorId], references: [id], onDelete: Cascade)
-  chatbotId       Int
+  chatbotId       String
   chatbot         Chatbot  @relation("message-chatbot", fields: [chatbotId], references: [id], onDelete: Cascade)
   isSentByVisitor Boolean
   createdAt       DateTime @default(now())
