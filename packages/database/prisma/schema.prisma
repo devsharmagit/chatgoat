@@ -44,4 +44,5 @@ model Message {
   chatbot         Chatbot  @relation("message-chatbot", fields: [chatbotId], references: [id], onDelete: Cascade)
   isSentByVisitor Boolean
   createdAt       DateTime @default(now())
+  content         String
 }

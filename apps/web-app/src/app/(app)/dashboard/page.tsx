@@ -1,5 +1,6 @@
 import { CreateChatBotDialog } from "@/components/ChatBotCreate";
 import { getAllChatbots } from "@/lib/database/chatbot";
+import Link from "next/link";
 
 const Page = async () => {
   const result = await getAllChatbots();
@@ -10,7 +11,7 @@ const Page = async () => {
         <CreateChatBotDialog />
         {result &&
           result.map((chatbot) => {
-            return <div key={chatbot.id}> {chatbot.name} </div>;
+            return <Link href={`/chatbot/${chatbot.id}`} key={chatbot.id}> {chatbot.name} </Link>;
           })}
       </div>
     </div>

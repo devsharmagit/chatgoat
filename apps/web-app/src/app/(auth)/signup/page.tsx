@@ -43,8 +43,8 @@ const Page = () => {
     })
     router.push("/verify-email/" + response.data.user.id)
    }
-    } catch (error : any) {
-      
+    } catch (error) {
+      console.log(error)
       toast({
         title: "Failed",
         description: error?.response?.data?.message || "Something went wrong!",
@@ -55,7 +55,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex justify-center items-center min-h-[600px] h-[90vh]">
-      <div className="w-[400px] bg-[#2f2b3a] p-5 rounded-xl border border-white border-opacity-30  ">
+      <div className="w-[400px] bg-[#2f2c38] p-5 rounded-xl border border-white border-opacity-30  ">
         <h1 className="text-center text-white text-2xl font-bold">
             Sign Up
         </h1>

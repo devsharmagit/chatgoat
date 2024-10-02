@@ -36,7 +36,6 @@ const Page = () => {
       email: values.email,
       password: values.password,
     });
-    
     if (result?.error) {
       toast({
         description: result?.error,
