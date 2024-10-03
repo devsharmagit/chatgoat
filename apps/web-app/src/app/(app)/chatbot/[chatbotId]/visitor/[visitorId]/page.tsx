@@ -1,66 +1,45 @@
 "use client";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Messages } from "@repo/types/message";
-import React, { useEffect, useRef, useState } from "react";
-import io, { Socket } from "socket.io-client";
+import useSocket from "@/hooks/useSocket";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+ 
 
-const Page = ({
+const formSchema = z.object({
+  textMessage: z.string().max(300),
+})
+
+
+const ChatPage = ({
   params: { chatbotId, visitorId },
 }: {
   params: { chatbotId: string; visitorId: string };
 }) => {
-  const [input, setInput] = useState<string>("");
-  const [messages, setMessages] = useState<Messages[]>([]);
 
-  const socket = io("http://localhost:8080");
-
-  const socketRef = useRef<null | Socket>(null)
-
-  const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (input.length !== 0) {
-      socket.emit("private_message", {
-        chatbotId,
-        visitorId,
-        isVisitor: false,
-        content: input,
-      });
-      setMessages((prev) => [
-        ...prev,
-        { content: input, isSentByVisitor: false, chatbotId, visitorId },
-      ]);
-      setInput("");
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      textMessage: "",
+    },
+  })
+  
+  const { messages, sendMessage } = useSocket(chatbotId, visitorId); 
+  
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    if (values.textMessage.length !== 0) {
+      sendMessage(values.textMessage); 
+      form.setValue("textMessage", "")
     }
-  };
-
-  useEffect(() => {
-    if (!socketRef.current) {
-      socketRef.current = io("http://localhost:8080");
-    }
-    const socket = socketRef.current;
-    
-    if (chatbotId && visitorId) {
-      socket.emit("register", chatbotId, visitorId, false);
-      
-      const messageListener = ({
-        content,
-        chatbotId,
-        isSentByVisitor,
-        visitorId,
-      }: Messages) => {
-        console.log("this iis working")
-        console.log(content)
-        setMessages((prev) => [
-          ...prev,
-          { content, chatbotId, isSentByVisitor, visitorId },
-        ]);
-      };
-      socket.on("receive_message", messageListener);
-      return () => {
-        socket.off("receive_message", messageListener);
-      };
-    }
-  }, [chatbotId, visitorId, socket]);
+  }
 
   return (
     <div>
@@ -70,17 +49,25 @@ const Page = ({
         ))}
       </div>
       <div className="flex flex-col">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-          />
-          <Button type="submit">Send</Button>
-        </form>
+      <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="textMessage"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="message here..." {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default ChatPage;

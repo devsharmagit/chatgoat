@@ -17,28 +17,29 @@ interface Connections {
 let connections: Connections[] = [];
 
 io.on("connection", (socket) => {
-  // Register the connection with chatbotId, visitorId, and isVisitor status
+
   socket.on("register", (chatbotId2 , visitorId2, isVisitor2) => {
     connections = connections.filter(({chatbotId, visitorId, isVisitor})=>{
       return (chatbotId !== chatbotId2) || (visitorId !== visitorId2) || (isVisitor !== isVisitor2)
     })
     connections.push({ socketId: socket.id, chatbotId: chatbotId2, visitorId: visitorId2, isVisitor: isVisitor2 });
     socket.emit("registered", { id: socket.id, chatbotId: chatbotId2, visitorId: visitorId2, isVisitor: isVisitor2 });
+    console.log(connections)
   });
 
-  // Handle private messaging between the visitor and the other client
+  
   socket.on("private_message", async ({ chatbotId, visitorId, isVisitor, content }) => {
+    console.log({chatbotId, visitorId, isVisitor, content})
     console.log("the number of connections is ", connections.length)
     console.log(connections)
     const targetConnection = connections.find((conn) => 
       conn.chatbotId === chatbotId && 
       conn.visitorId === visitorId && 
-      conn.isVisitor !== isVisitor // Find the opposite role (visitor/non-visitor)
+      conn.isVisitor !== isVisitor 
     );
     
 
     if (targetConnection) {
-      // Send the message to the target client's socket ID
       io.to(targetConnection.socketId).emit("receive_message", {
         content ,chatbotId, visitorId, isSentByVisitor: isVisitor
       });
@@ -54,13 +55,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("unregister", ()=>{
+    connections = connections.filter(({socketId})=> socketId !== socket.id)
+  })
+
   // Handle disconnection and remove the client from the connections array
   socket.on("disconnect", () => {
-    const index = connections.findIndex((conn) => conn.socketId === socket.id);
-    if (index !== -1) {
-      const disconnectedUser = connections.splice(index, 1);
-      console.log("User disconnected", disconnectedUser);
-    }
+    console.log("someone disconnected")
+    connections = connections.filter(({socketId})=> socketId !== socket.id)
   });
 });
 
