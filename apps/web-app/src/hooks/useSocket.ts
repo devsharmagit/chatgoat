@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { Messages } from "@repo/types/message";
+import axios from "axios";
 
 const useSocket = (chatbotId: string, visitorId: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -10,10 +11,15 @@ const useSocket = (chatbotId: string, visitorId: string) => {
   useEffect(() => {
     const newSocket = io("http://localhost:8080");
     setSocket(newSocket);
+    const fetchMessages = async () => {
+      const messages = await axios.get(`/api/messages/${chatbotId}/${visitorId}`);
+      setMessages(messages.data.messages);
+    };
+    fetchMessages();
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [chatbotId, visitorId]);
 
   useEffect(() => {
     if (socket && chatbotId && visitorId) {
@@ -21,7 +27,7 @@ const useSocket = (chatbotId: string, visitorId: string) => {
       console.log("emitting register");
 
       const messageListener = (message: Messages) => {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prev) => [ message, ...prev]);
       };
 
       socket.on("receive_message", messageListener);
@@ -32,21 +38,24 @@ const useSocket = (chatbotId: string, visitorId: string) => {
     }
   }, [chatbotId, visitorId, socket]);
 
-  const sendMessage = useCallback((content: string) => {
-    if (socket && content.trim()) {
-      const newMessage = {
-        content,
-        isSentByVisitor: false,
-        chatbotId,
-        visitorId,
-      };
-      socket.emit("private_message", {
-        ...newMessage,
-        isVisitor: false,
-      });
-      setMessages((prev) => [...prev, newMessage]);
-    }
-  }, [socket, chatbotId, visitorId]);
+  const sendMessage = useCallback(
+    (content: string) => {
+      if (socket && content.trim()) {
+        const newMessage = {
+          content,
+          isSentByVisitor: false,
+          chatbotId,
+          visitorId,
+        };
+        socket.emit("private_message", {
+          ...newMessage,
+          isVisitor: false,
+        });
+        setMessages((prev) => [newMessage, ...prev]);
+      }
+    },
+    [socket, chatbotId, visitorId]
+  );
 
   return { messages, sendMessage };
 };

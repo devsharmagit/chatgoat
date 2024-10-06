@@ -1,5 +1,5 @@
 export interface Messages {
-    id?: string,
+    id?: number,
     chatbotId: string,
     visitorId: string,
     isSentByVisitor: boolean,

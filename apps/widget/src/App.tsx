@@ -9,10 +9,13 @@ function App({ chatbotId }: { chatbotId: string }) {
   const handleChatClick = () => {
     setIsChatOpen((prev) => !prev);
   };
+  const handleChatClose = ()=>{
+    setIsChatOpen(false)
+  }
 
   return (
     <>
-      {isChatOpen && <ChatContainer chatbotId={chatbotId} />}
+      {isChatOpen && <ChatContainer chatbotId={chatbotId} closeChat={handleChatClose} />}
       <Button
         onClick={handleChatClick}
         variant={"destructive"}
