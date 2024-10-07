@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 import { Session, User } from "next-auth";
 
-// in getServerSession() we need to pass this function to get something
 export const nextauthOptions = {
   providers: [
     CredentialsProvider({

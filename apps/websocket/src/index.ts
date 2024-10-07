@@ -24,14 +24,11 @@ io.on("connection", (socket) => {
     })
     connections.push({ socketId: socket.id, chatbotId: chatbotId2, visitorId: visitorId2, isVisitor: isVisitor2 });
     socket.emit("registered", { id: socket.id, chatbotId: chatbotId2, visitorId: visitorId2, isVisitor: isVisitor2 });
-    console.log(connections)
   });
 
   
   socket.on("private_message", async ({ chatbotId, visitorId, isVisitor, content }) => {
-    console.log({chatbotId, visitorId, isVisitor, content})
-    console.log("the number of connections is ", connections.length)
-    console.log(connections)
+    
     const targetConnection = connections.find((conn) => 
       conn.chatbotId === chatbotId && 
       conn.visitorId === visitorId && 
@@ -49,9 +46,14 @@ io.on("connection", (socket) => {
       chatbotId: chatbotId,
       visitorId: visitorId
     }})
-      console.log("Message sent to", targetConnection.socketId);
+      
     } else {
-      console.log("Target not found for private message ");
+      await prisma.message.create({data:{
+        content: content,
+        isSentByVisitor: isVisitor,
+        chatbotId: chatbotId,
+        visitorId: visitorId
+      }})
     }
   });
 
@@ -59,7 +61,6 @@ io.on("connection", (socket) => {
     connections = connections.filter(({socketId})=> socketId !== socket.id)
   })
 
-  // Handle disconnection and remove the client from the connections array
   socket.on("disconnect", () => {
     console.log("someone disconnected")
     connections = connections.filter(({socketId})=> socketId !== socket.id)

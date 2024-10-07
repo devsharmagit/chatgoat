@@ -1,10 +1,10 @@
-import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { loginSchema } from "@/types/auth";
 import { generateVerificationCode } from "@/lib/verifyCodeGenerator";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/email-template";
+import prisma from "@repo/db/client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

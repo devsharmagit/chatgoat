@@ -1,10 +1,10 @@
-import prisma from "@/lib/db";
+import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
     const { verifyCode, userId } = await req.json();
-    const user = await prisma.user.findFirst({ where: { id: Number( userId) } });
+    const user = await prisma.user.findFirst({ where: { id:  userId } });
 
     const nowTime = new Date();
 
@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
 
     if (verifyCode === user?.verifyCode) {
       await prisma.user.update({
-        where: { id: Number( userId) },
+        where: { id: userId },
         data: { isVerified: true, verifyCode: null, verifyExpiry: null },
       });
     }

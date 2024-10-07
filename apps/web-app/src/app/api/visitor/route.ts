@@ -1,13 +1,11 @@
 import prisma from "@repo/db/client";
 import { visitorPost } from "@repo/types/visitor";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-
-// create visitor POST endpoint
 export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
-    console.log(body)
     const { success, data } = visitorPost.safeParse(body);
     if (!success)
       return NextResponse.json({ message: "Invalid data!" }, { status: 400 });
@@ -16,6 +14,7 @@ export const POST = async (req: NextRequest) => {
         chatbotId: data.chatbotId,
       },
     });
+    revalidatePath(`/chatbot/${data.chatbotId}`)
     return NextResponse.json(
       { message: "successfully created visitor", visitor },
       { status: 201 }

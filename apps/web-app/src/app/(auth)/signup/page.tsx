@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,10 +17,13 @@ import Link from "next/link";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 
 
 const Page = () => {
+
+const [isLoading, setIsLoading] = useState<boolean>(false)
   const { toast } = useToast()
   const router = useRouter()
   const form = useForm<SignupType>({
@@ -34,6 +37,7 @@ const Page = () => {
 
   async function onSubmit(values: SignupType) {
     try {
+      setIsLoading(true)
    const response = await  axios.post("/api/signup", {email: values.email, password: values.password})
    if(response.status === 200){
     toast({
@@ -44,12 +48,24 @@ const Page = () => {
     router.push("/verify-email/" + response.data.user.id)
    }
     } catch (error) {
-      console.log(error)
-      toast({
-        title: "Failed",
-        description: error?.response?.data?.message || "Something went wrong!",
-        variant: "destructive",
-      })
+      if (axios.isAxiosError(error)) {
+        // This is an Axios error, and `error.response` exists
+        toast({
+          title: "Failed",
+          description:
+            error.response?.data?.message || "Something went wrong!",
+          variant: "destructive",
+        });
+      } else {
+        // Handle non-Axios errors (unexpected errors)
+        toast({
+          title: "Failed",
+          description: "Something went wrong!",
+          variant: "destructive",
+        });
+      }
+    } finally{
+      setIsLoading(false)
     }
   }
 
@@ -60,7 +76,7 @@ const Page = () => {
             Sign Up
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
@@ -68,9 +84,11 @@ const Page = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input className="dark:border-white dark:border-opacity-35" type="email" placeholder="shadcn" {...field} />
+                    <Input className="dark:border-white dark:border-opacity-35" type="email" placeholder="example@email.com" {...field} />
                   </FormControl>
+                  {form.formState.errors.email && 
                   <FormMessage className="text-red-400" />
+                  }
                 </FormItem>
               )}
             />
@@ -81,9 +99,11 @@ const Page = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" className="dark:border-white dark:border-opacity-35" placeholder="shadcn" {...field} />
+                    <Input type="password" className="dark:border-white dark:border-opacity-35" placeholder="password" {...field} />
                   </FormControl>
+                  {form.formState.errors.password && 
                   <FormMessage className="text-red-400" />
+                  }
                 </FormItem>
               )}
             />
@@ -94,14 +114,16 @@ const Page = () => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input className="dark:border-white dark:border-opacity-35" type="password" placeholder="shadcn" {...field} />
+                    <Input className="dark:border-white dark:border-opacity-35" type="password" placeholder="confirm password" {...field} />
                   </FormControl>
+                  {form.formState.errors.confirmPassword && 
                   <FormMessage className="text-red-400" />
+                  }
                 </FormItem>
               )}
             />
-                       <Button type="submit" className="m-auto block rounded-full px-4 bg-[#a688fa] text-black">
-              Submit
+            <Button disabled={isLoading} type="submit" className="m-auto block rounded-full px-4 bg-[#a688fa] text-black">
+            {isLoading ? <Loader className="animate-spin"/> : "Submit"}  
             </Button>
           </form>
         </Form>

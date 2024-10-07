@@ -23,6 +23,8 @@ import {
 import { createChatbot } from "@/lib/database/chatbot";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { Plus } from "lucide-react";
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is too short.").max(30, "Name is too long."),
@@ -58,10 +60,13 @@ export function CreateChatBotDialog() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button
-          className="cursor-pointer border-white border-opacity-50 bg-[#A688FA] rounded-xl p-4 h-10 w-full "
+          className="cursor-pointer border-white border-opacity-30 bg-[#6e4451] rounded-xl w-fit "
           variant="outline"
         >
+          <Plus /> 
+          <p className="pl-1">
           Create new Chatbot
+          </p>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

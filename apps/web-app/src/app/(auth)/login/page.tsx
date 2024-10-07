@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,8 +17,10 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 const Page = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { toast } = useToast();
   const router = useRouter();
 
@@ -31,6 +33,7 @@ const Page = () => {
   });
 
   async function onSubmit(values: LoginType) {
+    setIsLoading(true)
     const result = await signIn("credentials", {
       redirect: false,
       email: values.email,
@@ -51,6 +54,7 @@ const Page = () => {
       });
       router.push("/dashboard")
     }
+    setIsLoading(false)
   }
 
   return (
@@ -58,7 +62,7 @@ const Page = () => {
       <div className="w-[400px] bg-[#2f2b3a] p-5 rounded-xl border border-white border-opacity-30  ">
         <h1 className="text-center text-white text-2xl font-bold">Login</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
@@ -69,11 +73,13 @@ const Page = () => {
                     <Input
                       className="dark:border-white dark:border-opacity-35"
                       type="email"
-                      placeholder="shadcn"
+                      placeholder="example@email.com"
                       {...field}
                     />
                   </FormControl>
+                  {form.formState.errors.email && 
                   <FormMessage className="text-red-400" />
+                  }
                 </FormItem>
               )}
             />
@@ -87,11 +93,13 @@ const Page = () => {
                     <Input
                       className="dark:border-white dark:border-opacity-35"
                       type="password"
-                      placeholder="shadcn"
+                      placeholder="password"
                       {...field}
                     />
                   </FormControl>
+                  {form.formState.errors.password && 
                   <FormMessage className="text-red-400" />
+                  }
                 </FormItem>
               )}
             />
@@ -99,7 +107,7 @@ const Page = () => {
               type="submit"
               className="m-auto block rounded-full px-4 bg-[#a688fa] text-black"
             >
-              Submit
+              {isLoading ? <Loader className="animate-spin"/> : "Submit"}  
             </Button>
           </form>
         </Form>

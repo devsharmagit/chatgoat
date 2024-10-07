@@ -36,7 +36,7 @@ const Navbar = () => {
           </Link>
         </div>
       </div>
-      <Separator />
+      <Separator className="h-[1px] bg-white opacity-30" />
     </>
   );
 };

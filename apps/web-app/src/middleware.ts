@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import type { NextApiRequest } from 'next';
 export { default } from 'next-auth/middleware';
 
-// middleware will run only on these matches
 export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/signup', '/', '/verify/:path*'],
+  matcher: [
+    '/dashboard/:path*',
+    '/chatbot/:path*',
+    '/login',
+    '/signup',
+    '/',
+    '/verify/:path*',
+  ],
 };
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request });
+  
+  const token = await getToken({ req: request as unknown as NextApiRequest });
   const url = request.nextUrl;
 
-  // if token is present and user is on auth pages then redirect to dahsboard
   if (
     token &&
     (url.pathname.startsWith('/login') ||
@@ -21,7 +28,7 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-//  if token is not present and user is on dashboard page then redirect to login page
+
   if (!token && url.pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
