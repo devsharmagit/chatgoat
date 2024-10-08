@@ -2,11 +2,20 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Messages as MessagesTypes } from "@repo/types/message";
 import axios from "axios";
+const mode = import.meta.env.VITE_ENVIROMENT;
 
 
 export interface Chatbots {
   visitorId: string;
   chatbotId: string;
+}
+
+
+let mainNextAppUrl = "http://localhost:3000";
+let websocketUrl = "http://localhost:8080"
+if (mode === "prod") {
+  mainNextAppUrl = "https://chatgoat.devsharmacode.com";
+  websocketUrl = "https://websocket-chatgoat.devsharmacode.com"
 }
 
 const useSocket = ({chatbotId}: {chatbotId: string}) => {
@@ -27,7 +36,7 @@ const useSocket = ({chatbotId}: {chatbotId: string}) => {
       if (chatbot) {
         tempVisitorId = chatbot.visitorId;
       } else {
-        const response = await axios.post("http://localhost:3000/api/visitor", {
+        const response = await axios.post(`${mainNextAppUrl}/api/visitor`, {
           chatbotId: chatbotId,
         });
         tempVisitorId = response.data.visitor.id;
@@ -35,7 +44,7 @@ const useSocket = ({chatbotId}: {chatbotId: string}) => {
       }
       setVisitorId(tempVisitorId);
       socketState?.emit("register", chatbotId, tempVisitorId, true);
-    const response = await axios.get(`http://localhost:3000/api/messages/${chatbotId}/${tempVisitorId}`)
+    const response = await axios.get(`${mainNextAppUrl}/api/messages/${chatbotId}/${tempVisitorId}`)
     if(response.status === 200) setMessages(response.data.messages)
     } catch (error) {
       console.log(error)
@@ -70,7 +79,7 @@ const useSocket = ({chatbotId}: {chatbotId: string}) => {
   };
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8080");
+    const newSocket = io(websocketUrl);
     setSocketState(newSocket);
   }, []);
 

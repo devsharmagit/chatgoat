@@ -8,8 +8,13 @@ const useSocket = (chatbotId: string, visitorId: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<Messages[]>([]);
 
+let websocketUrl = "http://localhost:8080"
+if( process.env.NODE_ENV === 'production'){
+  websocketUrl = "https://websocket-chatgoat.devsharmacode.com"
+}
+
   useEffect(() => {
-    const newSocket = io("http://localhost:8080");
+    const newSocket = io(websocketUrl);
     setSocket(newSocket);
     const fetchMessages = async () => {
       const messages = await axios.get(`/api/messages/${chatbotId}/${visitorId}`);
@@ -19,7 +24,7 @@ const useSocket = (chatbotId: string, visitorId: string) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [chatbotId, visitorId]);
+  }, [chatbotId, visitorId, websocketUrl]);
 
   useEffect(() => {
     if (socket && chatbotId && visitorId) {
