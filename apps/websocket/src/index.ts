@@ -1,7 +1,7 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import prisma from '@repo/db/client';
+import {db as prisma}  from './db/index.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -40,6 +40,7 @@ io.on("connection", (socket) => {
       io.to(targetConnection.socketId).emit("receive_message", {
         content ,chatbotId, visitorId, isSentByVisitor: isVisitor
       });
+      
     await prisma.message.create({data:{
       content: content,
       isSentByVisitor: isVisitor,

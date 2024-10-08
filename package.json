@@ -6,7 +6,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "start": "turbo start"
+    "start": "turbo run start --parallel"
   },
   "devDependencies": {
     "@types/node": "^22.7.2",
