@@ -20,11 +20,10 @@ const Page = async ({params: {chatbotId}} : {params: {chatbotId : string}}) => {
     const chatbot = await getChatbotDetails(chatbotId)
     if(!chatbot || !result) return null;
 
-    const codeString = `<div style="position: fixed; bottom: 15px; right: 15px">
-      <widget-web-component theme="lavaLampLounger" website-name="new project" projectid="cm0z4puw900015ns6rnkfsnx0"></widget-web-component>
-    </div>
-  
-    <script src="https://widget.opinify.in/widget.umd.js"></script>`;
+    const codeString = `<body>
+      <div data-chatbotId="${chatbotId}" id="chatgoatroot"></div>
+      <script src="https://widget-chatgoat.devsharmacode.com/widget-chatbot.js" defer></script>
+    </body>`;
   
     return (
     <div className="p-5">

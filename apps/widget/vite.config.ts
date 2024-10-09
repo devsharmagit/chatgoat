@@ -15,6 +15,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        entryFileNames: "widget-chatbot.js"
       },
     },
   },
