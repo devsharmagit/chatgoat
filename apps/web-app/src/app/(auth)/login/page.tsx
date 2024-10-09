@@ -39,7 +39,8 @@ const Page = () => {
       email: values.email,
       password: values.password,
     });
-    if (result?.error) {
+    console.log(result)
+    if (result?.error && result.status !== 200) {
       toast({
         description: result?.error,
         title: "Login Failed !",
