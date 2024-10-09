@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Messages as MessagesTypes } from "@repo/types/message";
 import axios from "axios";
-const mode = import.meta.env.VITE_ENVIROMENT;
+const isProd = import.meta.env.PROD;
 
 
 export interface Chatbots {
@@ -13,7 +13,7 @@ export interface Chatbots {
 
 let mainNextAppUrl = "http://localhost:3000";
 let websocketUrl = "http://localhost:8080"
-if (mode === "prod") {
+if (isProd === true) {
   mainNextAppUrl = "https://chatgoat.devsharmacode.com";
   websocketUrl = "https://websocket-chatgoat.devsharmacode.com"
 }
