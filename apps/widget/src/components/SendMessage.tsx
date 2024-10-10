@@ -1,10 +1,7 @@
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { Send } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
 const formSchema = z.object({
   textMessage: z.string().max(300),
@@ -15,7 +12,7 @@ interface SendMessageProps {
 }
 
 const SendMessage = ({ sendMessage }: SendMessageProps) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const {register, setValue, handleSubmit} = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       textMessage: "",
@@ -25,37 +22,18 @@ const SendMessage = ({ sendMessage }: SendMessageProps) => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (values.textMessage.length !== 0) {
       sendMessage(values.textMessage);
-      form.setValue("textMessage", "");
+      setValue("textMessage", "");
     }
   }
 
   return (
     <div className="px-2 py-2 rounded-b-md flex">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex gap-1 items-center flex-grow"
-        >
-          <FormField
-            control={form.control}
-            name="textMessage"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormControl className="">
-                  <Input placeholder="enter message here..." {...field} className="w-full" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <Button
-            type="submit"
-            variant={"destructive"}
-            className="h-[35px] w-[35px] rounded-md flex justify-center items-center p-1 text-white"
-          >
-            <Send width={25} height={25} />
-          </Button>
-        </form>
-      </Form>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full gap-2">
+        <input type="text" className="flex-grow bg-slate-100 border-b border-black border-opacity-20 outline-none px-2 focus:outline-none rounded-[5px] " {...register("textMessage")} />
+        <button type="submit" className="bg-red-500 text-white rounded-full px-[5px] py-[5px]">
+        <Send />
+        </button>
+      </form>
     </div>
   );
 };

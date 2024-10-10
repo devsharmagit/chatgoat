@@ -1,7 +1,6 @@
 import Header from "./Header";
 import Messages from "./Messages";
 import SendMessage from "./SendMessage";
-import { Button } from "./ui/button";
 import useSocket from "@/hooks/useSocket";
 import { Loader } from "lucide-react";
 
@@ -11,12 +10,12 @@ const ChatContainer = ({ chatbotId, closeChat }: { chatbotId: string, closeChat:
   });
 
   return (
-    <div className="fixed bottom-16 right-4 w-[350px] h-[500px] rounded-lg shadow-2xl flex flex-col">
+    <div className="fixed bottom-16 right-4 w-[350px] h-[500px] overflow-hidden shadow-2xl flex flex-col border border-opacity-20 rounded-2xl">
       {visitorId.length === 0  && !isLoading && (
         <div className="h-full flex flex-col justify-center items-center">
-          <Button onClick={handleStart} variant={"destructive"}>
+          <button onClick={handleStart} className="rounded-[8px] text-lg shadow-md bg-red-500 text-white px-3 py-1">
             Start
-          </Button>
+          </button>
           <p className="text-sm pt-3"> Start chat with experts ! </p>
           <p className="text-xs">
             Powered by {" "}
@@ -32,7 +31,6 @@ const ChatContainer = ({ chatbotId, closeChat }: { chatbotId: string, closeChat:
       }
       {visitorId.length !== 0 && !isLoading && (
         <>
-          {visitorId}
           <Header name="Experts" closeChat={closeChat} />
           <Messages messages={messages} />
           <SendMessage sendMessage={sendMessage} />
