@@ -20,10 +20,12 @@ const Page = async ({params: {chatbotId}} : {params: {chatbotId : string}}) => {
     const chatbot = await getChatbotDetails(chatbotId)
     if(!chatbot || !result) return null;
 
-    const codeString = `<body>
-      <div data-chatbotId="${chatbotId}" id="chatgoatroot"></div>
-      <script src="https://widget-chatgoat.devsharmacode.com/widget-chatbot.js" defer></script>
-    </body>`;
+    const codeString = `
+      <body>
+        <widget-web-component  chatbotId="${chatbotId}"></widget-web-component>
+        <script src="http://localhost:3001/widget-chatbot.js" defer></script>
+      </body>
+    `;
   
     return (
     <div className="p-5">

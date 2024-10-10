@@ -16,7 +16,7 @@
   "dependencies": {
     "express": "^4.21.0",
     "socket.io": "^4.8.0",
-    "@repo/db": "*",
+    "@repo/db": "workspace:*",
     "@prisma/client": "^5.12.1"
   },
   "devDependencies": {
