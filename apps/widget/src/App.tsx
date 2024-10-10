@@ -1,21 +1,33 @@
 import { MessageCircleMore } from "lucide-react";
-import {    useState } from "react";
+import {    useEffect, useState } from "react";
 import ChatContainer from "./components/ChatContainer";
+import axios from "axios";
 
 function App({ chatbotid }: { chatbotid: string }) {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [styles, setStyles] = useState<string>("")
   const handleChatClick = () => {
     setIsChatOpen((prev) => !prev);
   };
   const handleChatClose = ()=>{
     setIsChatOpen(false)
   }
-
+useEffect(()=>{
+const fetchStyles = async()=>{
+  try {
+    const response = await axios.get("https://widget.devsharmacode.com/widget-chatbot.css")
+setStyles(response.data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+  fetchStyles()
+}, [])
 
   return (
     <>
     <style>
-      {/* {styles} */}
+      {styles}
     </style>
       {isChatOpen && <ChatContainer chatbotId={chatbotid} closeChat={handleChatClose} />}
       <button
