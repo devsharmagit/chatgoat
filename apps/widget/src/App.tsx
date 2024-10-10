@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircleMore } from "lucide-react";
-import {  useState } from "react";
+import {    useState } from "react";
 import ChatContainer from "./components/ChatContainer";
 
-function App({ chatbotId }: { chatbotId: string }) {
+function App({ chatbotid }: { chatbotid: string }) {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-
   const handleChatClick = () => {
     setIsChatOpen((prev) => !prev);
   };
@@ -13,9 +12,13 @@ function App({ chatbotId }: { chatbotId: string }) {
     setIsChatOpen(false)
   }
 
+
   return (
     <>
-      {isChatOpen && <ChatContainer chatbotId={chatbotId} closeChat={handleChatClose} />}
+    <style>
+      {/* {styles} */}
+    </style>
+      {isChatOpen && <ChatContainer chatbotId={chatbotid} closeChat={handleChatClose} />}
       <Button
         onClick={handleChatClick}
         variant={"destructive"}
